@@ -98,9 +98,11 @@ object Movie extends App {
       * @param w a line of input.
       * @return a Try[Movie]
       */
-    def parse(w: String): Try[Movie] = ??? // TO BE IMPLEMENTED
+    def parse(w: String): Try[Movie] = Try {
+      val ws = w.split(",").toSeq
+      apply(ws)
+    }
   }
-
   val ingester = new Ingest[Movie]()
   if (args.length > 0) {
     val source = Source.fromFile(args.head)
@@ -120,8 +122,9 @@ object Movie extends App {
     // Hint: form a new list which is consisted by the elements in list in position indices. Int* means array of Int.
     // 6 points
     val result: Seq[String] =
-    // TO BE IMPLEMENTED
-    ???
+    for(i<- indices)
+        yield list(i)
+
     result.toList
   }
 
@@ -201,8 +204,12 @@ object Rating {
     */
   // Hint: This should similar to apply method in Object Name. The parameter of apply in case match should be same as case class Rating
   // 13 points
-  def apply(s: String): Rating = ??? // TO BE IMPLEMENTED
-
+  def apply(s: String): Rating =
+    s match {
+      case rRating(code, _, null) => Rating(code, None)
+      case rRating(code, _, age) => Rating(code,age.toIntOption)
+      case _ => throw ParseException(s"parse error in Rating: $s")
+    }
 }
 
 case class ParseException(w: String) extends Exception(w)
